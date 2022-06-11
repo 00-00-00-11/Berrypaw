@@ -1,24 +1,24 @@
 // Packages
 import {
-    Client,
-    Collection,
-    Formatters,
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
-    Intents
-} from 'discord.js';
-import fs from 'fs';
-import modals from 'discord-modals';
-import dotenv from 'dotenv';
-import logger from './logger.js';
+  Client,
+  Collection,
+  Formatters,
+  MessageEmbed,
+  MessageActionRow,
+  MessageButton,
+  Intents,
+} from "discord.js";
+import fs from "fs";
+import colors from "colors";
+import modals from "discord-modals";
+import dotenv from "dotenv";
 
 // Initalize "dotenv"
 dotenv.config();
 
 // Initalize Client
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 // Initalize Discord Modals
@@ -26,15 +26,25 @@ modals(client);
 
 // Ready Event
 client.on("ready", async () => {
-    logger.info("200", `Logged in as "${client.user.tag}"`, client.user);
+  console.log(`Logged in as ${client.user.tag}!`.bold.underline.red);
 
-    // Set Client Status
-    client.user.setStatus("dnd");
+  // Set Client Status
+  client.user.setStatus("dnd");
 
-    // Set Client Activity
-    client.user.setActivity(`for outages`, {
-        type: "WATCHING",
-    });
+  // Set Client Activity
+  client.user.setActivity(`for outages`, {
+    type: "WATCHING",
+  });
+});
+
+// Debug Event
+client.on("debug", (info) => {
+  console.log(colors.green(info));
+});
+
+// Error Event
+client.on("error", (error) => {
+  console.log(colors.red(error));
 });
 
 // Login to Discord
