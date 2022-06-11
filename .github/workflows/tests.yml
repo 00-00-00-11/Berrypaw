@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "Tests"
 
 on:
   push:
@@ -36,3 +36,13 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+  eslint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1.4.4
+        with:
+          node-version: 14.x
+      - run: npm i && npm run lint
