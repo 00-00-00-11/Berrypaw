@@ -159,5 +159,33 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 
+client.on('modalSubmit', async (interaction) => {
+    const modal = client.modals.get(interaction.customId);
+
+    if (!modal) {
+        let embed = new MessageEmbed()
+            .setTitle("Error")
+            .setColor("#FF0000")
+            .setDescription("Command does not exist!");
+
+        await interaction.reply({
+            embeds: [embed]
+        });
+    }
+
+    try {
+        await modal.execute(client, interaction);
+    } catch (error) {
+        let embed = new MessageEmbed()
+            .setTitle("Oops, there was an error!")
+            .setColor("RANDOM")
+            .addField("Message", Formatters.codeBlock("javascript", error), false);
+
+        await interaction.reply({
+            embeds: [embed]
+        });
+    }
+});
+
 // Login to Discord
 client.login(process.env.TOKEN);
