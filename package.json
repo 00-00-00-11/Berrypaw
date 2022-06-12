@@ -8,7 +8,6 @@
 		"format": "npx prettier --write .",
 		"lint": "eslint ."
 	},
-	"type": "module",
 	"dependencies": {
 		"@discordjs/rest": "^0.5.0",
 		"colors": "^1.4.0",

@@ -1,11 +1,8 @@
 // Packages
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
-import fs from "fs";
-import dotenv from "dotenv";
-
-// Initalize "dotenv"
-dotenv.config();
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
+const fs = require("fs");
+require("dotenv").config();
 
 // Initalize REST
 const rest = new REST({

@@ -1,5 +1,5 @@
 // Packages
-import {
+const {
 	Client,
 	Collection,
 	Formatters,
@@ -7,14 +7,11 @@ import {
 	MessageActionRow,
 	MessageButton,
 	Intents,
-} from "discord.js";
-import fs from "fs";
-import colors from "colors";
-import modals from "discord-modals";
-import dotenv from "dotenv";
-
-// Initalize "dotenv"
-dotenv.config();
+} = require("discord.js");
+const fs = require("fs");
+const colors = require("colors");
+const modals = require("discord-modals");
+require("dotenv").config();
 
 // Initalize Client
 const client = new Client({
