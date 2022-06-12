@@ -11,6 +11,7 @@ const {
 const fs = require("fs");
 const colors = require("colors");
 const modals = require("discord-modals");
+const server = require("./server");
 require("dotenv").config();
 
 // Initalize Client
@@ -87,6 +88,11 @@ for (const file of buttonFiles) {
 	const button = require(`./buttons/${file}`);
 	client.buttons.set(button.data.name, button);
 }
+
+// Server Events
+server.emitter.on("ping", (data) => {
+	console.log(colors.green(data));
+});
 
 // Message Command Event
 client.on("messageCreate", async (message) => {
