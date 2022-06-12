@@ -18,6 +18,9 @@ const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
+// Client Extension
+require("./client_extension")(client);
+
 // Add extras to Client for simplicity with interactions
 client.Formatters = Formatters;
 client.MessageEmbed = MessageEmbed;
@@ -84,6 +87,44 @@ for (const file of buttonFiles) {
 	const button = require(`./buttons/${file}`);
 	client.buttons.set(button.data.name, button);
 }
+
+// Message Command Event
+client.on("messageCreate", async (message) => {
+	// Block Messages
+	if (message.author.bot) return;
+	if (message.channel.type === "dm") return;
+
+	// Block message if doesn't start with prefix
+	if (!message.content.startsWith(client.prefix)) return;
+
+	// Fetch command
+	const command = message.content.slice(client.prefix.length).split(/ +/);
+	const commandName = command.shift().toLowerCase();
+	const commandObject = client.commands.get(commandName);
+
+	if (commandObject) {
+		const button = {
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: "Run command",
+					style: 1,
+					custom_id: commandObject.data.name,
+				},
+			],
+		};
+
+		message.reply({
+			content: "To use this command, please click the button down below!",
+			components: [button],
+		});
+	} else {
+		message.reply({
+			content: "Sorry, that command was not found!",
+		});
+	}
+});
 
 // Interaction Event(s)
 client.on("interactionCreate", async (interaction) => {
@@ -156,32 +197,32 @@ client.on("interactionCreate", async (interaction) => {
 	}
 });
 
-client.on('modalSubmit', async (interaction) => {
-    const modal = client.modals.get(interaction.customId);
+client.on("modalSubmit", async (interaction) => {
+	const modal = client.modals.get(interaction.customId);
 
-    if (!modal) {
-        let embed = new MessageEmbed()
-            .setTitle("Error")
-            .setColor("#FF0000")
-            .setDescription("Command does not exist!");
+	if (!modal) {
+		let embed = new MessageEmbed()
+			.setTitle("Error")
+			.setColor("#FF0000")
+			.setDescription("Command does not exist!");
 
-        await interaction.reply({
-            embeds: [embed]
-        });
-    }
+		await interaction.reply({
+			embeds: [embed],
+		});
+	}
 
-    try {
-        await modal.execute(client, interaction);
-    } catch (error) {
-        let embed = new MessageEmbed()
-            .setTitle("Oops, there was an error!")
-            .setColor("RANDOM")
-            .addField("Message", Formatters.codeBlock("javascript", error), false);
+	try {
+		await modal.execute(client, interaction);
+	} catch (error) {
+		let embed = new MessageEmbed()
+			.setTitle("Oops, there was an error!")
+			.setColor("RANDOM")
+			.addField("Message", Formatters.codeBlock("javascript", error), false);
 
-        await interaction.reply({
-            embeds: [embed]
-        });
-    }
+		await interaction.reply({
+			embeds: [embed],
+		});
+	}
 });
 
 // Login to Discord

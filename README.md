@@ -6,7 +6,7 @@ This is a status bot for Fates List that automatically sends messages regarding 
 
 ### How will this work?
 
-It will most likely recieve requests from a service such as Uptimerobot to be known of any issues regarding our services such as a invalid SSL certificate or when the website is down depending on the HTTP status code.
+This project recieves data from Uptimerobot to be aware of any issues regarding our services such as a invalid SSL certificate or when the website is down depending on the HTTP status code.
 
 ## Permissions
 
