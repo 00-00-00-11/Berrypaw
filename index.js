@@ -90,8 +90,29 @@ for (const file of buttonFiles) {
 }
 
 // Server Events
-server.emitter.on("ping", (data) => {
-	console.log(colors.green(data));
+server.emitter.on("update", (data) => {
+	let json;
+
+	if (data.typeName === "Up") {
+		const embed = new MessageEmbed()
+			.setTitle(`${data.name} is back online!`)
+			.setColor("#00ff00")
+			.addField("HTTP Status", data.httpStatus, false)
+			.addField("Downtime Duration", data.timeAffected, false);
+
+		json = embed;
+	} else if (data.typeName === "Down") {
+		const embed = new MessageEmbed()
+			.setTitle(`${data.name} is down!`)
+			.setColor("#ff0000")
+			.addField("HTTP Status", data.httpStatus, false);
+
+		json = embed;
+	}
+
+	client.channels.cache.get(process.env.CHANNEL).send({
+		embeds: [json],
+	});
 });
 
 // Message Command Event

@@ -36,6 +36,7 @@ Due to some changes to the Discord API, you now have to give your bot some inten
 
 - `CLIENT_ID` - The Client ID of the Discord Application
 - `TOKEN` - The Discord BOT Token
+- `CHANNEL` - The Discord Channel ID to post status updates to
 
 # Questions?
 
