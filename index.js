@@ -12,6 +12,7 @@ const fs = require("fs");
 const colors = require("colors");
 const modals = require("discord-modals");
 const server = require("./server");
+const { forums, logChannels } = require("./data/channels.json");
 require("dotenv").config();
 
 // Initalize Client
@@ -35,13 +36,20 @@ modals(client);
 client.on("ready", async () => {
 	console.log(`Logged in as ${client.user.tag}!`.bold.underline.red);
 
-	// Set Client Status
-	client.user.setStatus("dnd");
+	// Set Client Activity/Status
+	if (process.env.NODE_ENV === "production") {
+		client.user.setStatus("online");
 
-	// Set Client Activity
-	client.user.setActivity(`for outages`, {
-		type: "WATCHING",
-	});
+		client.user.setActivity(`Fates List`, {
+			type: "WATCHING",
+		});
+	} else {
+		client.user.setStatus("idle");
+
+		client.user.setActivity(`Test Build`, {
+			type: "WATCHING",
+		});
+	}
 });
 
 // Debug Event
@@ -90,7 +98,7 @@ for (const file of buttonFiles) {
 }
 
 // Server Events
-server.emitter.on("update", (data) => {
+server.emitter.on("uptimeUpdate", (data) => {
 	let json;
 
 	if (data.typeName === "Up") {
@@ -110,7 +118,7 @@ server.emitter.on("update", (data) => {
 		json = embed;
 	}
 
-	client.channels.cache.get(process.env.CHANNEL).send({
+	client.channels.cache.get(logChannels.status).send({
 		embeds: [json],
 	});
 });
@@ -142,8 +150,18 @@ client.on("messageCreate", async (message) => {
 			],
 		};
 
+		const embed = new MessageEmbed()
+			.setTitle("Command")
+			.setColor("RANDOM")
+			.addField("Name:", commandObject.data.name, true)
+			.addField("Description:", commandObject.data.description, true)
+			.setFooter({
+				text: "To run this command, click the button below.",
+				iconURL: message.author.displayAvatarURL(),
+			});
+
 		message.reply({
-			content: "To use this command, please click the button down below!",
+			embeds: [embed],
 			components: [button],
 		});
 	} else {
@@ -252,5 +270,85 @@ client.on("modalSubmit", async (interaction) => {
 	}
 });
 
+client.on("threadCreate", async (thread) => {
+	const json = {
+		creatorID: thread.ownerId,
+		title: thread.name,
+		id: thread.id,
+		channelID: thread.parentId,
+	};
+
+	if (forums[json.channelID]) {
+		const data = forums[json.channelID];
+		let msg;
+
+		switch (data.name) {
+			case "public-support":
+				msg =
+					"Thanks for creating this support ticket, someone from our team will help you shortly!";
+				break;
+
+			case "premium-support":
+				msg =
+					"Thanks for creating this premium support ticket, someone from our team will help you **VERY** shortly!";
+				break;
+
+			case "suggestions":
+				msg =
+					"Thanks for creating this suggestion, our team will review it shortly!";
+				break;
+		}
+
+		// Send message to Thread
+		thread.send({
+			content: msg,
+		});
+
+		// Get thread creator
+		const user = await client.users.cache.get(json.creatorID);
+		let creator;
+
+		if (user) {
+			creator = {
+				tag: `${user.username}#${user.discriminator}`,
+				id: user.id,
+			};
+		} else {
+			creator = {
+				tag: "Unknown",
+				id: "Unknown",
+			};
+		}
+
+		// Send message to Log Channel
+		const logChannel = client.channels.cache.get(logChannels.support);
+		const embed = new MessageEmbed()
+			.setTitle(`New ${data.type} Thread`)
+			.setColor("RANDOM")
+			.addField("Thread Name:", json.title, true)
+			.addField("Thread ID:", json.id, true)
+			.addField("Channel Name:", json.name, true)
+			.addField("Channel ID:", json.channelID, true)
+			.addField("Creator Username:", creator.tag, true)
+			.addField("Creator ID:", creator.id, true);
+
+		logChannel.send({
+			embeds: [embed],
+		});
+	} else {
+		console.log(
+			colors.red(
+				"Thread created in a non-forum channel, or is not yet added to object"
+			)
+		);
+	}
+});
+
 // Login to Discord
-client.login(process.env.TOKEN);
+server.emitter.on("serverStarted", () => {
+	if (process.env.NODE_ENV === "production") {
+		client.login(process.env.TOKEN);
+	} else {
+		client.login(process.env.DEV_TOKEN);
+	}
+});

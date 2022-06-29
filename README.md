@@ -36,8 +36,14 @@ Due to some changes to the Discord API, you now have to give your bot some inten
 
 - `CLIENT_ID` - The Client ID of the Discord Application
 - `TOKEN` - The Discord BOT Token
-- `CHANNEL` - The Discord Channel ID to post status updates to
+- `NODE_ENV` - The Environment you are running the bot in (`development` or `production`)
+- `DEV_TOKEN` - The Discord BOT Token (for the development environment, not required)
+- `DEV_CLIENT_ID` - The Client ID of the Discord Application (for the development environment, not required)
+- `SERVER_PORT` - The port that you want the server to run on
+- `DEV_SERVER_PORT` - The port that you want the server to run on (for the development environment, not required)
+- `PREFIX` - The prefix that you want the bot to use for commands
+- `DEV_PREFIX` - The prefix that you want the bot to use for commands (for the development environment, not required)
 
-# Questions?
+# Questions
 
 Reach out to us on our [Discord Server](https://discord.gg/cMAnfu8AJB) and we will be glad to answer questions you may have regarding Fates List!

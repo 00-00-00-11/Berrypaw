@@ -1,6 +1,6 @@
 {
-	"name": "status_bot",
-	"version": "1.0.0",
+	"name": "berrypaw",
+	"version": "0.0.1",
 	"description": "",
 	"scripts": {
 		"start": "node index",

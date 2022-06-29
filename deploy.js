@@ -4,10 +4,22 @@ const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 require("dotenv").config();
 
+// Client ID and Token
+let clientID;
+let token;
+
+if (process.env.NODE_ENV === "production") {
+	clientID = process.env.CLIENT_ID;
+	token = process.env.TOKEN;
+} else {
+	clientID = process.env.DEV_CLIENT_ID;
+	token = process.env.DEV_TOKEN;
+}
+
 // Initalize REST
 const rest = new REST({
 	version: "9",
-}).setToken(process.env.TOKEN);
+}).setToken(token);
 
 // Slash Commands
 const commands = [];
@@ -21,6 +33,6 @@ for (const file of commandFiles) {
 }
 
 rest
-	.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands })
+	.put(Routes.applicationCommands(clientID), { body: commands })
 	.then(console.log)
 	.catch(console.error);

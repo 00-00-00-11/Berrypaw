@@ -1,7 +1,12 @@
 const fetch = require("node-fetch");
 
 module.exports = (client) => {
-	client.prefix = "status.";
+	// Prefix
+	if (process.env.NODE_ENV === "production") {
+		client.prefix = process.env.PREFIX;
+	} else {
+		client.prefix = process.env.DEV_PREFIX;
+	}
 
 	client.isStaff = async (userID, permRequirement) => {
 		// Render the URL

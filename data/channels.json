@@ -1,0 +1,23 @@
+{
+	"forums": {
+		"991602756202790992": {
+			"name": "public-support",
+			"id": "991602756202790992",
+			"type": "Support"
+		},
+		"991604927669473350": {
+			"name": "suggestions",
+			"id": "991604927669473350",
+			"type": "Suggestion"
+		},
+		"991601650047389766": {
+			"name": "premium-support",
+			"id": "991601650047389766",
+			"type": "Support"
+		}
+	},
+	"logChannels": {
+		"status": "984683448075706368",
+		"support": "991606685745553519"
+	}
+}
