@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("recent")
 		.setDescription("View recent incidents"),
-	async execute(client, interaction) {
+	async execute(client, interaction, server) {
 		await interaction.reply({
 			content: "This command is not yet implemented.",
 		});

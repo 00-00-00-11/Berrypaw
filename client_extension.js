@@ -10,25 +10,33 @@ module.exports = (client) => {
 
 	client.isStaff = async (userID, permRequirement) => {
 		// Render the URL
-		const url = `https://api.fateslist.xyz/baypaw/perms/${userID}`;
+		const fatesURL = `https://api.fateslist.xyz/baypaw/perms/${userID}`;
+		const metroURL = `https://catnip.metrobots.xyz/team`;
 
 		// Get data
-		let data = await fetch(url);
+		let fates = await fetch(fatesURL);
+		let metro = await fetch(metroURL);
 
-		// Check if user is staff and ensure that the user is Developer+
-		if (data.statusText === "OK") {
-			data = await data.json();
+		// Check if user is staff and ensure that the user perm is equal or higher than the required perm level
+		if (fates.statusText === "OK" && metro.statusText === "OK") {
+			fates = await fates.json();
+			metro = await metro.json();
 
-			const permNumber = data.perm;
+			// Fetch the user data from Metro Reviews
+			metro = metro.find((user) => user.id === userID) || null;
+
+			const permNumber = fates.perm;
 
 			if (permNumber >= permRequirement) {
 				return {
-					data: data,
+					fates: fates,
+					metro: metro || {},
 					allowed: true,
 				};
 			} else {
 				return {
-					data: data,
+					fates: fates,
+					metro: metro || {},
 					allowed: false,
 				};
 			}

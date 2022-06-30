@@ -1,0 +1,9 @@
+:root {
+	/* Background */
+	--light: #ffffff;
+	--dark: #000000;
+
+	/* Text */
+	--text-light: #000000;
+	--text-dark: #ffffff;
+}

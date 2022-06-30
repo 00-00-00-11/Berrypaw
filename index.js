@@ -9,10 +9,10 @@ const {
 	Intents,
 } = require("discord.js");
 const fs = require("fs");
-const colors = require("colors");
 const modals = require("discord-modals");
 const server = require("./server");
 const { forums, logChannels } = require("./data/channels.json");
+require("colors");
 require("dotenv").config();
 
 // Initalize Client
@@ -34,7 +34,9 @@ modals(client);
 
 // Ready Event
 client.on("ready", async () => {
-	console.log(`Logged in as ${client.user.tag}!`.bold.underline.red);
+	console.log(
+		`${"[Discord]".yellow} => ${`Logged in as ${client.user.tag}!`.red}`
+	);
 
 	// Set Client Activity/Status
 	if (process.env.NODE_ENV === "production") {
@@ -54,12 +56,19 @@ client.on("ready", async () => {
 
 // Debug Event
 client.on("debug", (info) => {
-	console.log(colors.green(info));
+	const type = `[${
+		info.substring(info.indexOf("[") + 1, info.indexOf("]")) || "Unknown"
+	}]`;
+
+	const debugData = `${type.green} => ${
+		info.replace(type, "").replace("[", "").replace("]", "").red
+	}`;
+	console.log(`${"[Discord Debug]".yellow} ${debugData.green}`);
 });
 
 // Error Event
 client.on("error", (error) => {
-	console.log(colors.red(error));
+	console.log(`${"[Discord]".yellow} ${"[Error]".green} => ${error.red}`);
 });
 
 // Collections
@@ -179,7 +188,7 @@ client.on("interactionCreate", async (interaction) => {
 
 		if (command) {
 			try {
-				await command.execute(client, interaction);
+				await command.execute(client, interaction, server);
 			} catch (error) {
 				console.error(error);
 
@@ -204,7 +213,7 @@ client.on("interactionCreate", async (interaction) => {
 
 		if (button) {
 			try {
-				await button.execute(client, interaction);
+				await button.execute(client, interaction, server);
 			} catch (error) {
 				console.error(error);
 
@@ -221,7 +230,7 @@ client.on("interactionCreate", async (interaction) => {
 			// Check if button is equal to a slash command
 			if (command) {
 				try {
-					await command.execute(client, interaction);
+					await command.execute(client, interaction, server);
 				} catch (error) {
 					console.error(error);
 
@@ -257,7 +266,7 @@ client.on("modalSubmit", async (interaction) => {
 	}
 
 	try {
-		await modal.execute(client, interaction);
+		await modal.execute(client, interaction, server);
 	} catch (error) {
 		let embed = new MessageEmbed()
 			.setTitle("Oops, there was an error!")
@@ -271,15 +280,26 @@ client.on("modalSubmit", async (interaction) => {
 });
 
 client.on("threadCreate", async (thread) => {
+	const user = client.users.cache.get(thread.ownerId);
+
 	const json = {
-		creatorID: thread.ownerId,
-		title: thread.name,
-		id: thread.id,
-		channelID: thread.parentId,
+		thread: {
+			name: thread.name,
+			id: thread.id,
+		},
+		creator: {
+			name: user.username,
+			discriminator: user.discriminator,
+			id: thread.ownerId,
+		},
+		channel: {
+			name: "Unknown",
+			id: thread.parentId,
+		},
 	};
 
-	if (forums[json.channelID]) {
-		const data = forums[json.channelID];
+	if (forums[json.channel.id]) {
+		const data = forums[json.channel.id];
 		let msg;
 
 		switch (data.name) {
@@ -304,42 +324,30 @@ client.on("threadCreate", async (thread) => {
 			content: msg,
 		});
 
-		// Get thread creator
-		const user = await client.users.cache.get(json.creatorID);
-		let creator;
-
-		if (user) {
-			creator = {
-				tag: `${user.username}#${user.discriminator}`,
-				id: user.id,
-			};
-		} else {
-			creator = {
-				tag: "Unknown",
-				id: "Unknown",
-			};
-		}
-
 		// Send message to Log Channel
 		const logChannel = client.channels.cache.get(logChannels.support);
 		const embed = new MessageEmbed()
-			.setTitle(`New ${data.type} Thread`)
+			.setTitle(`New ${String(data.type)} Thread`)
 			.setColor("RANDOM")
-			.addField("Thread Name:", json.title, true)
-			.addField("Thread ID:", json.id, true)
-			.addField("Channel Name:", json.name, true)
-			.addField("Channel ID:", json.channelID, true)
-			.addField("Creator Username:", creator.tag, true)
-			.addField("Creator ID:", creator.id, true);
+			.addField("Thread Name:", String(json.thread.name), true)
+			.addField("Thread ID:", String(json.thread.id), true)
+			.addField("Channel Name:", String(json.channel.name), true)
+			.addField("Channel ID:", String(json.channel.id), true)
+			.addField(
+				"Creator Username:",
+				String(`${json.creator.name}#${json.creator.discriminator}`),
+				true
+			)
+			.addField("Creator ID:", String(json.creator.id), true);
 
 		logChannel.send({
 			embeds: [embed],
 		});
 	} else {
 		console.log(
-			colors.red(
-				"Thread created in a non-forum channel, or is not yet added to object"
-			)
+			`${"[Discord]".yellow} ${"[Warning]".green} => ${
+				"Thread created in a non-forum channel, or is not yet added to object".red
+			}`
 		);
 	}
 });

@@ -1,0 +1,5 @@
+/* Basic Stuff (body) */
+body {
+	background: var(--light);
+	color: var(--text-light);
+}
