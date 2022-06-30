@@ -7,7 +7,7 @@ module.exports = {
 	async execute(client, interaction, server) {
 		await interaction.reply({
 			content:
-				"This project is open sourced and could use some help! You can help us or take a look at the code here: https://github.com/Fates-List/status_bot",
+				"This project is open sourced and could use some help! You can help us or take a look at the code here: https://github.com/Fates-List/Berrypaw",
 		});
 	},
 };

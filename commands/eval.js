@@ -9,8 +9,8 @@ module.exports = {
 		const isStaff = await client.isStaff(interaction.user.id, 6.5);
 		if (!isStaff.allowed)
 			return interaction.reply({
-				content: "You do not have enough permissions to use this command!"
-            });
+				content: "You do not have enough permissions to use this command!",
+			});
 
 		const modal = new Modal()
 			.setCustomId("eval")
