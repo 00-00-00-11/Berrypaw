@@ -25,6 +25,7 @@ module.exports = {
 		const perms = await clean({
 			Fates: staff.fates,
 			Metro: staff.metro,
+			Selectlist: staff.selectlist,
 		});
 
 		await interaction.reply({
