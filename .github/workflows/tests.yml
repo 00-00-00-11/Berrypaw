@@ -2,9 +2,9 @@ name: "Tests"
 
 on:
  push:
-  branches: ["development"]
+  branches: ["development", "production"]
  pull_request:
-  branches: ["production"]
+  branches: ["production", "development"]
  schedule:
   - cron: "30 22 * * 4"
 
