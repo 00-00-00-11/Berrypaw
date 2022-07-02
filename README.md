@@ -1,10 +1,9 @@
-# Berrypaw (BETA)
-
-This is a status bot for Fates List that automatically sends messages regarding any downtime or issues within the website and/or api as well at it's services.
+# Berrypaw
+Berrypaw is a Discord Bot that allows people to view and make changes to their bots on Select List/Fates List as well as monitor the Fates List API status
 
 # About this Project
 
-### How will this work?
+### How does this all work?
 
 This project recieves data from Uptimerobot to be aware of any issues regarding our services such as a invalid SSL certificate or when the website is down depending on the HTTP status code.
 
